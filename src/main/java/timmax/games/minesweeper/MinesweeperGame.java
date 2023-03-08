@@ -25,6 +25,8 @@ public class MinesweeperGame extends Game {
 
     private int countClosedTiles = SIDE_OF_WIDTH * SIDE_OF_HEIGHT;
 
+    private int score;
+
     @Override
     public void initialize() {
         setScreenSize(SIDE_OF_WIDTH, SIDE_OF_HEIGHT);
@@ -90,6 +92,8 @@ public class MinesweeperGame extends Game {
             setCellValueEx(x, y, Color.RED, MINE);
             gameOver();
         } else {
+            score += 5;
+            setScore(score);
             setCellNumber(x, y, gameField[y][x].getCountMineNeighbors());
             if (gameField[y][x].getCountMineNeighbors() == 0) {
                 for (GameObject gameObject : getNeighbors(gameField[y][x])) {
