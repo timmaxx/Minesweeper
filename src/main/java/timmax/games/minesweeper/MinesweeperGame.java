@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MinesweeperGame extends Game {
-    private static final int SIDE_OF_WIDTH = 30;
-    private static final int SIDE_OF_HEIGHT = 5;
+    private static final int SIDE_OF_WIDTH = 10;//30;
+    private static final int SIDE_OF_HEIGHT = 10;//5;
 
     private static final int REST_OF_MINE_INSTALLATION_IN_PERCENTS = 10;
 
@@ -34,7 +34,7 @@ public class MinesweeperGame extends Game {
     }
 
     private void createGame() {
-        countMinesOnField = 0;
+        //countMinesOnField = 0;
         for (int y = 0; y < SIDE_OF_HEIGHT; y++) {
             for (int x = 0; x < SIDE_OF_WIDTH; x++) {
                 boolean isMine = getRandomNumber( 100) < REST_OF_MINE_INSTALLATION_IN_PERCENTS;
@@ -43,11 +43,12 @@ public class MinesweeperGame extends Game {
                     countMinesOnField++;
                 }
                 setCellColor(x, y, Color.ORANGE);
+                setCellValue(x, y, "");
             }
         }
         countFlags = countMinesOnField;
+        System.out.println("countFlags = " + countFlags);
         countMineNeighbors();
-        isGameStopped = false;
     }
 
     private List<GameObject> getNeighbors(GameObject gameObject) {
@@ -110,7 +111,11 @@ public class MinesweeperGame extends Game {
 
     @Override
     public void onMouseLeftClick(int x, int y) {
-        openTile(x ,y);
+        if (isGameStopped) {
+            restart();
+        } else {
+            openTile(x, y);
+        }
     }
 
     private void markTile(int x, int y) {
@@ -134,7 +139,7 @@ public class MinesweeperGame extends Game {
 
     @Override
     public void onMouseRightClick(int x, int y) {
-        markTile(x ,y);
+        markTile(x, y);
     }
 
     private void gameOver() {
@@ -145,5 +150,14 @@ public class MinesweeperGame extends Game {
     private void win() {
         isGameStopped = true;
         showMessageDialog(Color.AQUA, "Win!", Color.WHITE, 30);
+    }
+
+    private void restart() {
+        isGameStopped = false;
+        countClosedTiles = 0; //
+        score = 0;
+        countMinesOnField = 0; //
+        setScore( score);
+        createGame();
     }
 }
