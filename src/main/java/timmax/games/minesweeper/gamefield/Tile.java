@@ -1,35 +1,27 @@
-package timmax.games.minesweeper;
+package timmax.games.minesweeper.gamefield;
 
-public class GameObject {
-    private final int x;
-    private final int y;
-
-    private final boolean isMine;
+public class Tile {
+    private boolean isMine;
     private int countMineNeighbors;
     private boolean isOpen;
     private boolean isFlag;
 
-    public GameObject(int x, int y, boolean isMine) {
-        this.x = x;
-        this.y = y;
-        this.isMine = isMine;
+    //private List<Tile> neighbors;
+
+    public Tile() {
         isOpen = false;
         isFlag = false;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+    void setMine() {
+        isMine = true;
     }
 
     public boolean isMine() {
         return isMine;
     }
 
-    public void incCountMineNeighbors() {
+    void incCountMineNeighbors() {
         this.countMineNeighbors++;
     }
 
@@ -52,4 +44,5 @@ public class GameObject {
     public void setFlag(boolean flag) {
         isFlag = flag;
     }
+
 }
