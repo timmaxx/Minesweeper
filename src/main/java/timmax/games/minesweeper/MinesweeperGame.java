@@ -19,8 +19,9 @@ public class MinesweeperGame extends Game {
 
     private int countFlags;
 
-
     private final GameObject[][] gameField = new GameObject[SIDE_OF_HEIGHT][SIDE_OF_WIDTH];
+
+    private boolean isGameStopped;
 
     @Override
     public void initialize() {
@@ -42,6 +43,7 @@ public class MinesweeperGame extends Game {
         }
         countFlags = countMinesOnField;
         countMineNeighbors();
+        isGameStopped = false;
     }
 
     private List<GameObject> getNeighbors(GameObject gameObject) {
@@ -79,7 +81,8 @@ public class MinesweeperGame extends Game {
         gameField[y][x].open();
         setCellColor(x, y, Color.GREEN);
         if (gameField[y][x].isMine()) {
-            setCellValue(x, y, MINE);
+            setCellValueEx(x, y, Color.RED, MINE);
+            gameOver();
         } else {
             setCellNumber(x, y, gameField[y][x].getCountMineNeighbors());
             if (gameField[y][x].getCountMineNeighbors() == 0) {
@@ -99,7 +102,8 @@ public class MinesweeperGame extends Game {
 
     private void markTile(int x, int y) {
         if (        gameField[y][x].isOpen()
-                ||  ( countFlags == 0 && !gameField[y][x].isFlag())) {
+                ||  ( countFlags == 0 && !gameField[y][x].isFlag())
+                ||  isGameStopped) {
             return;
         }
         if (!gameField[y][x].isFlag()) {
@@ -118,5 +122,10 @@ public class MinesweeperGame extends Game {
     @Override
     public void onMouseRightClick(int x, int y) {
         markTile(x ,y);
+    }
+
+    private void gameOver() {
+        isGameStopped = true;
+        showMessageDialog(Color.AQUA, "Game over!", Color.WHITE, 30);
     }
 }
