@@ -1,14 +1,12 @@
 package timmax.games.minesweeper.gamefield;
 
-public class Tile {
+public class MinesweeperTile {
     private boolean isMine;
     private int countMineNeighbors;
     private boolean isOpen;
     private boolean isFlag;
 
-    //private List<Tile> neighbors;
-
-    public Tile() {
+    public MinesweeperTile() {
         isOpen = false;
         isFlag = false;
     }

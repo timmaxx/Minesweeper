@@ -1,7 +1,7 @@
 package timmax.games.minesweeper;
 
 import com.javarush.engine.cell.*;
-import timmax.games.minesweeper.gamefield.GameField;
+import timmax.games.minesweeper.gamefield.MinesweeperField;
 
 public class MinesweeperGame extends Game {
     private static final int SIDE_OF_WIDTH = 30;
@@ -9,10 +9,7 @@ public class MinesweeperGame extends Game {
 
     private static final int REST_OF_MINE_INSTALLATION_IN_PERCENTS = 10;
 
-    //private int countClosedTiles = SIDE_OF_WIDTH * SIDE_OF_HEIGHT;
-
-
-    private GameField gameField;
+    private MinesweeperField minesweeperField;
 
     @Override
     public void initialize() {
@@ -21,8 +18,8 @@ public class MinesweeperGame extends Game {
     }
 
     private void createGame() {
-        gameField = new GameField(this, SIDE_OF_WIDTH, SIDE_OF_HEIGHT, REST_OF_MINE_INSTALLATION_IN_PERCENTS);
-        gameField.showBegin();
+        minesweeperField = new MinesweeperField(this, SIDE_OF_WIDTH, SIDE_OF_HEIGHT, REST_OF_MINE_INSTALLATION_IN_PERCENTS);
+        minesweeperField.showBegin();
     }
 
     @Override
@@ -30,10 +27,10 @@ public class MinesweeperGame extends Game {
         if (x < 0 || x >= SIDE_OF_WIDTH || y < 0 || y >= SIDE_OF_HEIGHT) {
             return;
         }
-        if (gameField.isGameStopped()) {
+        if (minesweeperField.isGameStopped()) {
             createGame();
         } else {
-            gameField.openTile(x, y);
+            minesweeperField.openTile(x, y);
         }
     }
 
@@ -42,16 +39,6 @@ public class MinesweeperGame extends Game {
         if (x < 0 || x >= SIDE_OF_WIDTH || y < 0 || y >= SIDE_OF_HEIGHT) {
             return;
         }
-        gameField.markTile(x, y);
+        minesweeperField.markTile(x, y);
     }
-/*
-    private void restart() {
-        //isGameStopped = false;
-        //countClosedTiles = 0; //
-        //score = 0;
-        //countMinesOnField = 0; //
-        //setScore( score);
-        gameField.showBegin();
-    }
-    */
 }

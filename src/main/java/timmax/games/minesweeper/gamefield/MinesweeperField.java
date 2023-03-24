@@ -6,11 +6,9 @@ import com.javarush.engine.cell.Game;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GameField {
-    private final int sideOfWidth;// = 10;//30;
-    private final int sideOfHeight;// = 10;//5;
-
-    // private int restOfMineInstallationInPercents;// = 10;
+public class MinesweeperField {
+    private final int sideOfWidth;
+    private final int sideOfHeight;
 
     private int countMinesOnField;
 
@@ -20,7 +18,7 @@ public class GameField {
 
     private int countFlags;
 
-    private final Tile[][] tiles;
+    private final MinesweeperTile[][] minesweeperTiles;
 
     private boolean isGameStopped;
 
@@ -33,17 +31,16 @@ public class GameField {
 
     private final Game game;
 
-    public GameField(Game game, int sideOfWidth, int sideOfHeight, int restOfMineInstallationInPercents) {
+    public MinesweeperField(Game game, int sideOfWidth, int sideOfHeight, int restOfMineInstallationInPercents) {
         this.game = game;
         this.sideOfWidth = sideOfWidth;
         this.sideOfHeight = sideOfHeight;
-        // this.REST_OF_MINE_INSTALLATION_IN_PERCENTS = REST_OF_MINE_INSTALLATION_IN_PERCENTS;
         score = 0;
 
-        tiles = new Tile[sideOfHeight][sideOfWidth];
+        minesweeperTiles = new MinesweeperTile[sideOfHeight][sideOfWidth];
         for (int y = 0; y < sideOfHeight; y++) {
             for (int x = 0; x < sideOfWidth; x++) {
-                tiles[y][x] = new Tile();
+                minesweeperTiles[y][x] = new MinesweeperTile();
             }
         }
 
@@ -52,23 +49,18 @@ public class GameField {
         do {
             int x = random.nextInt(sideOfWidth);
             int y = random.nextInt(sideOfHeight);
-            if (!tiles[y][x].isMine()) {
-                tiles[y][x].setMine();
+            if (!minesweeperTiles[y][x].isMine()) {
+                minesweeperTiles[y][x].setMine();
                 countMinesOnField++;
             }
         } while (countMinesOnField < sideOfHeight * sideOfWidth * restOfMineInstallationInPercents / 100 );
 
-/*
-        tiles[0][0].setMine();
-        tiles[2][2].setMine();
-        countMinesOnField = 2;
-*/
         countFlags = countMinesOnField;
         countMineNeighbors();
     }
 
-    public Tile getTileByXY(int x, int y) {
-        return tiles[y][x];
+    public MinesweeperTile getTileByXY(int x, int y) {
+        return minesweeperTiles[y][x];
     }
 
     public boolean isGameStopped() {
@@ -78,17 +70,17 @@ public class GameField {
     private void countMineNeighbors() {
         for (int y = 0; y < sideOfHeight; y++) {
             for (int x = 0; x < sideOfWidth; x++) {
-                Tile tile = getTileByXY(x, y);
-                for (Tile neighborTile : getTileNeighbors(x, y)) {
-                    if ( neighborTile.isMine()) {
-                        tile.incCountMineNeighbors();
+                MinesweeperTile minesweeperTile = getTileByXY(x, y);
+                for (MinesweeperTile neighborMinesweeperTile : getTileNeighbors(x, y)) {
+                    if ( neighborMinesweeperTile.isMine()) {
+                        minesweeperTile.incCountMineNeighbors();
                     }
                 }
             }
         }
     }
 
-    private List<Tile> getTileNeighbors(int xx, int yy) {
+    private List<MinesweeperTile> getTileNeighbors(int xx, int yy) {
         return getXYNeighbors(xx, yy)
                 .stream()
                 .map(xy -> getTileByXY(xy.getX(), xy.getY()))
@@ -121,48 +113,48 @@ public class GameField {
     }
 
     public void openTile(int x, int y) {
-        Tile tile = getTileByXY(x, y);
-        if (tile.isOpen() || tile.isFlag() || isGameStopped) {
+        MinesweeperTile minesweeperTile = getTileByXY(x, y);
+        if (minesweeperTile.isOpen() || minesweeperTile.isFlag() || isGameStopped) {
             return;
         }
-        tile.open();
+        minesweeperTile.open();
         countClosedTiles--;
         game.setCellColor(x, y, Color.GREEN);
-        if (tile.isMine()) {
+        if (minesweeperTile.isMine()) {
             game.setCellValueEx(x, y, Color.RED, MINE);
             gameOver();
         } else {
             score += 5;
             game.setScore(score);
-            game.setCellNumber(x, y, tile.getCountMineNeighbors());
-            if (tile.getCountMineNeighbors() == 0) {
+            game.setCellNumber(x, y, minesweeperTile.getCountMineNeighbors());
+            if (minesweeperTile.getCountMineNeighbors() == 0) {
                 for (XY xy : getXYNeighbors(x, y)) {
-                    Tile neighborTile = getTileByXY(xy.getX(), xy.getY());
-                    if (!neighborTile.isMine() && !neighborTile.isOpen()) {
+                    MinesweeperTile neighborMinesweeperTile = getTileByXY(xy.getX(), xy.getY());
+                    if (!neighborMinesweeperTile.isMine() && !neighborMinesweeperTile.isOpen()) {
                         openTile(xy.getX(), xy.getY());
                     }
                 }
             }
         }
-        if ( countClosedTiles == countMinesOnField && !tile.isMine()) {
+        if ( countClosedTiles == countMinesOnField && !minesweeperTile.isMine()) {
             win();
         }
     }
 
     public void markTile(int x, int y) {
-        Tile tile = getTileByXY(x, y);
-        if (        tile.isOpen()
-                ||  ( countFlags == 0 && !tile.isFlag())
+        MinesweeperTile minesweeperTile = getTileByXY(x, y);
+        if (        minesweeperTile.isOpen()
+                ||  ( countFlags == 0 && !minesweeperTile.isFlag())
                 ||  isGameStopped) {
             return;
         }
-        if (!tile.isFlag()) {
-            tile.setFlag(true);
+        if (!minesweeperTile.isFlag()) {
+            minesweeperTile.setFlag(true);
             countFlags--;
             game.setCellValue(x, y, FLAG);
             game.setCellColor(x, y, Color.YELLOW);
         } else {
-            tile.setFlag(false);
+            minesweeperTile.setFlag(false);
             countFlags++;
             game.setCellValue(x, y, "");
             game.setCellColor(x, y, Color.ORANGE);
